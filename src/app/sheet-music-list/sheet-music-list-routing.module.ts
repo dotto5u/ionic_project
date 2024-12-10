@@ -13,8 +13,12 @@ const routes: Routes = [
     loadChildren: () => import('./sheet-music-new/sheet-music-new.module').then( m => m.SheetMusicNewPageModule)
   },
   {
-    path: ':id',
-    loadChildren: () => import('./sheet-music/sheet-music.module').then( m => m.SheetMusicPageModule)
+    path: ':id/edit',
+    loadChildren: () => import('./sheet-music-edit/sheet-music-edit.module').then( m => m.SheetMusicEditPageModule)
+  },
+  {
+    path: ':id/view',
+    loadChildren: () => import('./sheet-music-view/sheet-music-view.module').then( m => m.SheetMusicViewPageModule)
   }
 ];
 

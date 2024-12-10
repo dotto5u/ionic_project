@@ -8,7 +8,7 @@ export class SheetMusic {
     private _imagePath?: string;
 
     constructor(id?: string, data: Partial<SheetMusic> = {}) {
-        this._id = data.id;
+        this._id = id;
         this._name = data.name || '';
         this._author = data.author || '';
         this._difficulty = data.difficulty || 'Easy';
