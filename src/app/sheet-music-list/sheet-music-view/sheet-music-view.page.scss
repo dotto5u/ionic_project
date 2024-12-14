@@ -1,0 +1,18 @@
+.img-section {
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: white;
+}
+  
+img {
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: top;
+    border-radius: 8px;
+    cursor: pointer;
+}
+  

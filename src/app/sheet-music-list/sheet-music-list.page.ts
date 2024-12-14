@@ -11,33 +11,15 @@ import { SheetMusic } from '../models/sheet-music/sheet-music.model';
 export class SheetMusicListPage implements OnInit {
   sheetMusic: Array<SheetMusic> = [];
 
-  constructor(private sheetMusicService: SheetMusicService, private router: Router) { }
+  constructor(private sheetMusicService: SheetMusicService) { }
 
   ngOnInit() {
+    this.getAllSheetMusic();
+  }
+
+  private getAllSheetMusic() {
     this.sheetMusicService.getAll().subscribe(data => {
       this.sheetMusic = data;
-    })
-  }
-
-  addMusicSheet() {
-    this.router.navigate(['/sheet-music-list/new']);
-  }
-
-  editMusicSheet(id?: string) {
-    if (id) {
-      this.router.navigate([`/sheet-music-list/${id}/edit`])
-    }
-  }
-
-  viewMusicSheet(id?: string) {
-    if (id) {
-      this.router.navigate([`/sheet-music-list/${id}/view`])
-    }
-  }
-
-  deleteMusicSheet(id?: string) {
-    if (id) {
-      // TODO
-    }
+    });
   }
 }
