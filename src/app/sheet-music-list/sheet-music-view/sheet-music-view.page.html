@@ -20,7 +20,7 @@
         <h2>{{ sheet.name }}</h2>
         <p><strong>Auteur :</strong> {{ sheet.author }}</p> 
 
-        <ion-button (click)="toggleIsLearned()" expand="block" color="primary">
+        <ion-button (click)="updateIsLearned()" expand="block" color="primary">
           <ion-icon [name]="sheet.isLearned ? 'checkmark-circle' : 'close-circle'" slot="start"></ion-icon>
           {{ sheet.isLearned ? 'Marquer comme non appris' : 'Marquer comme appris' }}
         </ion-button>
@@ -29,10 +29,10 @@
           Modifier
         </ion-button>
 
-        <p><strong>Difficulté :</strong> {{ sheet.difficulty }}</p>
-        <p><strong>Type :</strong> {{ sheet.type }}</p>
+        <p><strong>Difficulté :</strong> {{ getDifficultyValue() }}</p>
+        <p><strong>Type :</strong> {{ getTypeValue() }}</p>
 
-        <ion-button (click)="delete()" expand="block" color="danger">
+        <ion-button (click)="deleteSheetMusic()" expand="block" color="danger">
           <ion-icon name="trash-outline" slot="start"></ion-icon>
           Supprimer
         </ion-button>

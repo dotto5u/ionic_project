@@ -10,11 +10,11 @@ const routes: Routes = [
   },
   {
     path: 'new',
-    loadChildren: () => import('./sheet-music-new/sheet-music-new.module').then( m => m.SheetMusicNewPageModule)
+    loadChildren: () => import('./sheet-music-form/sheet-music-form.module').then( m => m.SheetMusicFormPageModule)
   },
   {
     path: ':id/edit',
-    loadChildren: () => import('./sheet-music-edit/sheet-music-edit.module').then( m => m.SheetMusicEditPageModule)
+    loadChildren: () => import('./sheet-music-form/sheet-music-form.module').then( m => m.SheetMusicFormPageModule)
   },
   {
     path: ':id/view',

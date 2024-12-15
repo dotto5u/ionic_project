@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { SheetMusicPage } from './sheet-music.page';
+import { SheetMusicFormPage } from './sheet-music-form.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: SheetMusicPage
+    component: SheetMusicFormPage
   }
 ];
 
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SheetMusicPageRoutingModule {}
+export class SheetMusicFormPageRoutingModule {}

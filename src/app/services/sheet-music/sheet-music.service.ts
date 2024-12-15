@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore'
-import { SheetMusic } from 'src/app/models/sheet-music/sheet-music.model';
+import { SheetMusic, SheetMusicData} from 'src/app/models/sheet-music/sheet-music.model';
 import { Observable, map } from 'rxjs';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { Observable, map } from 'rxjs';
 })
 export class SheetMusicService {
   private collectionPath = '/sheet-music'
-  private sheetMusicRef: AngularFirestoreCollection<SheetMusic>;
+  private sheetMusicRef: AngularFirestoreCollection<SheetMusicData>;
 
   constructor(firestore: AngularFirestore) {
     this.sheetMusicRef = firestore.collection(this.collectionPath);
@@ -18,7 +18,7 @@ export class SheetMusicService {
     return this.sheetMusicRef.snapshotChanges().pipe(
       map(changes => 
         changes.map(doc => {
-          const data = doc.payload.doc.data() as SheetMusic;
+          const data = doc.payload.doc.data() as SheetMusicData;
           const id = doc.payload.doc.id;
           
           return new SheetMusic(id, {...data});
@@ -34,7 +34,7 @@ export class SheetMusicService {
           if (doc.exists) {
             obs.next(new SheetMusic(id, {...doc.data()} as SheetMusic));
           } else {
-            obs.error(new Error(`${id} not found`));
+            obs.error(new Error('La partition n\'existe pas'));
           }
           obs.complete();
         },
@@ -45,9 +45,31 @@ export class SheetMusicService {
     });
   }
 
-  updateIsLearned(id: string, isLearned: boolean): Observable<void> {
+  add(sheet: SheetMusic): Observable<void> {
+    return new Observable((obs) => {
+      this.sheetMusicRef.add(sheet.toJson()).then(() => {
+        obs.next();
+        obs.complete();
+      }).catch((error) => {
+        obs.error(error);
+      });
+    });
+  }
+
+  update(sheet: SheetMusic): Observable<void> {
     return new Observable(obs => {
-      this.sheetMusicRef.doc(id).update({ isLearned }).then(() => {
+      this.sheetMusicRef.doc(sheet.id).update(sheet.toJson()).then(() => {
+        obs.next();
+        obs.complete();
+      }).catch(error => {
+        obs.error(error);
+      });
+    });
+  }
+
+  delete(id: string): Observable<void> {
+    return new Observable(obs => {
+      this.sheetMusicRef.doc(id).delete().then(() => {
         obs.next();
         obs.complete();
       }).catch(error => {

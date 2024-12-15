@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SheetMusicNewPageRoutingModule } from './sheet-music-new-routing.module';
+import { SheetMusicFormPageRoutingModule } from './sheet-music-form-routing.module';
 
-import { SheetMusicNewPage } from './sheet-music-new.page';
+import { SheetMusicFormPage } from './sheet-music-form.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SheetMusicNewPageRoutingModule
+    SheetMusicFormPageRoutingModule
   ],
-  declarations: [SheetMusicNewPage]
+  declarations: [SheetMusicFormPage]
 })
-export class SheetMusicNewPageModule {}
+export class SheetMusicFormPageModule {}

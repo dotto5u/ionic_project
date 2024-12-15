@@ -5,16 +5,27 @@ export class SheetMusic {
     private _difficulty: string;
     private _type: string;
     private _isLearned: boolean;
-    private _imagePath?: string;
+    private _imagePath: string;
 
-    constructor(id?: string, data: Partial<SheetMusic> = {}) {
+    constructor(id?: string, data: Partial<SheetMusicData> = {}) {
         this._id = id ?? '-1';
         this._name = data.name || '';
         this._author = data.author || '';
-        this._difficulty = data.difficulty || 'Easy';
-        this._type = data.type || 'Piano';
+        this._difficulty = data.difficulty || 'easy';
+        this._type = data.type || 'piano';
         this._isLearned = data.isLearned || false;
         this._imagePath = data.imagePath || '';
+    }
+
+    toJson(): SheetMusicData {
+        return {
+            name: this._name,
+            author: this._author,
+            difficulty: this._difficulty,
+            type: this._type,
+            isLearned: this._isLearned,
+            imagePath: this._imagePath
+        };
     }
 
     get id(): string {
@@ -65,8 +76,16 @@ export class SheetMusic {
         this._isLearned = value;
     }
 
-    set imagePath(value: string | undefined) {
+    set imagePath(value: string) {
         this._imagePath = value;
     }
 }
-  
+
+export interface SheetMusicData {
+    name: string;
+    author: string;
+    difficulty: string;
+    type: string;
+    isLearned: boolean;
+    imagePath: string;
+}
