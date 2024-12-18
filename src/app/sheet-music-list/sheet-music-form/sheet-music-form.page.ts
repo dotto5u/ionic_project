@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { SheetMusic } from 'src/app/models/sheet-music/sheet-music.model';
 import { OptionsService } from 'src/app/services/options/options.service';
+import { Picture, PictureService } from 'src/app/services/picture/picture.service';
 import { SheetMusicService } from 'src/app/services/sheet-music/sheet-music.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 
@@ -13,8 +14,9 @@ import { ToastService } from 'src/app/services/toast/toast.service';
   styleUrls: ['./sheet-music-form.page.scss'],
 })
 export class SheetMusicFormPage implements OnInit {
-  isEditing: boolean = false; 
+  isEditing: boolean = false;
   sheet: SheetMusic = new SheetMusic();
+  tempPicture: Picture | null = null;
 
   difficultyOptions = new Map<string, string>();
   typeOptions = new Map<string, string>();
@@ -22,43 +24,76 @@ export class SheetMusicFormPage implements OnInit {
   constructor(
     private sheetMusicService: SheetMusicService, 
     private optionsService: OptionsService, 
+    private pictureService: PictureService, 
     private toastService: ToastService, 
     private alertController: AlertController, 
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
       this.isEditing = true;
-      this.getSheetMusicById(id)
+      
+      try {
+        this.sheet = await this.getSheetMusicById(id);
+      } catch (error) {
+        this.toastService.presentToast('danger', 'Une erreur est survenue lors du chargement des données', '/sheet-music-list');
+      }
     }
 
     this.difficultyOptions = this.optionsService.getDifficultyOptions();
     this.typeOptions = this.optionsService.getTypeOptions();
   }
 
-  private getSheetMusicById(id: string) {
-    this.sheetMusicService.getOne(id).subscribe({
-      next: (sheet) => {
-        this.sheet = sheet;
-      },
-      error: () => {
-        this.toastService.presentToast('danger', 'Une erreur est survenue lors du chargement de la partition', '/sheet-music-list');
-      }
+  ngOnDestroy() {
+    if (this.tempPicture) {
+      this.pictureService.deletePicture(this.tempPicture.imagePath);
+    }
+  }
+
+  private async getSheetMusicById(id: string): Promise<SheetMusic> {
+    return new Promise((resolve, reject) => {
+      this.sheetMusicService.getOne(id).subscribe({
+        next: (sheet) => {
+          resolve(sheet);
+        },
+        error: (error) => {
+          reject(error);
+        }
+      });
     });
   }
+
+  async takePicture() {
+    try {
+      const picture: Picture = await this.pictureService.takePicture();
+      
+      if (picture) {
+        const oldImagePath = this.sheet.picture?.imagePath;
   
-  submit(form: NgForm) {
+        if (oldImagePath && oldImagePath !== 'default') {
+          this.pictureService.deletePicture(oldImagePath);
+        }
+  
+        this.sheet.imagePath = picture.imagePath;
+        this.sheet.setPicture(picture);
+        this.tempPicture = picture;
+      }
+    } catch (error) {}
+  }
+  
+  async submit(form: NgForm) {
     if (form.invalid) return;
 
     this.isEditing ? this.updateSheetMusic() : this.addSheetMusic();
   }
 
-  addSheetMusic() {
+  async addSheetMusic() {
     this.sheetMusicService.add(this.sheet).subscribe({
       next: () => {
+        this.tempPicture = null;
         this.toastService.presentToast('success', 'La partition a été créée avec succès', '/sheet-music-list');
       },
       error: () => {
@@ -81,6 +116,7 @@ export class SheetMusicFormPage implements OnInit {
           handler: () => {
             this.sheetMusicService.update(this.sheet).subscribe({
               next: () => {
+                this.tempPicture = null;
                 this.toastService.presentToast('success', 'La partition a été mise à jour avec succès', '/sheet-music-list');
               },
               error: () => {

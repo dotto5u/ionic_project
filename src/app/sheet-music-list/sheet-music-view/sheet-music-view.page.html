@@ -11,7 +11,7 @@
   <ion-grid>
     <ion-row class="img-section">
       <ion-col size="12">
-        <img [src]="'../../assets/images/' + sheet.imagePath" alt="{{ sheet.name }}" />
+        <img [src]="sheet.picture?.imagePath == 'default' ? '../../assets/images/default.webp' : sheet.picture?.webviewPath" alt="{{ sheet.name }}" />
       </ion-col>
     </ion-row>
 

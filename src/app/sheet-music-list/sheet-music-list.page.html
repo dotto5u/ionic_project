@@ -13,7 +13,7 @@
     <ion-row>
       <ion-col size="12" sizeMd="6" sizeLg="4" *ngFor="let sheet of sheetMusic">
         <ion-card>
-          <img [routerLink]="['/sheet-music-list', sheet.id, 'view']" [src]="'../../assets/images/' + sheet.imagePath" alt="{{ sheet.name }}" />
+          <img [routerLink]="['/sheet-music-list', sheet.id, 'view']" [src]="sheet.picture?.imagePath == 'default' ? '../../assets/images/default.webp' : sheet.picture?.webviewPath" alt="{{ sheet.name }}" />
           <ion-card-header>
             <ion-card-title>{{ sheet.name }}</ion-card-title>
             <ion-card-subtitle>{{ sheet.author }}</ion-card-subtitle>

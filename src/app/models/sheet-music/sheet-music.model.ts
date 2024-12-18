@@ -1,3 +1,14 @@
+import { Picture } from "src/app/services/picture/picture.service";
+
+export interface SheetMusicData {
+    name: string;
+    author: string;
+    difficulty: string;
+    type: string;
+    isLearned: boolean;
+    imagePath: string;
+}
+
 export class SheetMusic {
     private _id: string;
     private _name: string;
@@ -6,15 +17,19 @@ export class SheetMusic {
     private _type: string;
     private _isLearned: boolean;
     private _imagePath: string;
+    private _picture: Picture | null;
 
     constructor(id?: string, data: Partial<SheetMusicData> = {}) {
-        this._id = id ?? '-1';
+        this._id = id ?? '';
+
         this._name = data.name || '';
         this._author = data.author || '';
         this._difficulty = data.difficulty || 'easy';
         this._type = data.type || 'piano';
         this._isLearned = data.isLearned || false;
         this._imagePath = data.imagePath || '';
+
+        this._picture = null;
     }
 
     toJson(): SheetMusicData {
@@ -52,8 +67,12 @@ export class SheetMusic {
         return this._isLearned;
     }
 
-    get imagePath(): string | undefined {
+    get imagePath(): string {
         return this._imagePath;
+    }
+
+    get picture(): Picture | null {
+        return this._picture;
     }
 
     set name(value: string) {
@@ -79,13 +98,8 @@ export class SheetMusic {
     set imagePath(value: string) {
         this._imagePath = value;
     }
-}
 
-export interface SheetMusicData {
-    name: string;
-    author: string;
-    difficulty: string;
-    type: string;
-    isLearned: boolean;
-    imagePath: string;
+    setPicture(picture: Picture) {
+        this._picture = picture;
+    }
 }

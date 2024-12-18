@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore'
 import { SheetMusic, SheetMusicData} from 'src/app/models/sheet-music/sheet-music.model';
+import { Picture, PictureService } from 'src/app/services/picture/picture.service';
 import { Observable, map } from 'rxjs';
 
 @Injectable({
@@ -10,7 +11,7 @@ export class SheetMusicService {
   private collectionPath = '/sheet-music'
   private sheetMusicRef: AngularFirestoreCollection<SheetMusicData>;
 
-  constructor(firestore: AngularFirestore) {
+  constructor(firestore: AngularFirestore, private pictureService: PictureService) {
     this.sheetMusicRef = firestore.collection(this.collectionPath);
   }
 
@@ -20,8 +21,13 @@ export class SheetMusicService {
         changes.map(doc => {
           const data = doc.payload.doc.data() as SheetMusicData;
           const id = doc.payload.doc.id;
-          
-          return new SheetMusic(id, {...data});
+          const sheetMusic = new SheetMusic(id, { ...data });
+
+          this.pictureService.loadPicture(sheetMusic.imagePath).then(picture => {
+            sheetMusic.setPicture(picture);
+          });
+
+          return sheetMusic;
         })
       )
     );
@@ -32,7 +38,14 @@ export class SheetMusicService {
       this.sheetMusicRef.doc(id).get().subscribe({
         next: doc => {
           if (doc.exists) {
-            obs.next(new SheetMusic(id, {...doc.data()} as SheetMusic));
+            const data = doc.data() as SheetMusicData;
+            const sheetMusic = new SheetMusic(id, { ...data });
+
+            this.pictureService.loadPicture(sheetMusic.imagePath).then(picture => {
+              sheetMusic.setPicture(picture);
+            });
+
+            obs.next(sheetMusic);
           } else {
             obs.error(new Error('La partition n\'existe pas'));
           }
