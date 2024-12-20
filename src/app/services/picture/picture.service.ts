@@ -10,19 +10,29 @@ export interface Picture {
   webviewPath?: string;
 }
 
+export class CameraError extends Error {
+  public override message: string;
+  public code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.message = message;
+    this.code = code;
+    this.name = 'CameraError';
+
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class PictureService {
   constructor(private platform: Platform) {}
 
-  async takePicture(): Promise<Picture> {
+  async newPicture(): Promise<Picture> {
     try {
-      const capturedPicture = await Camera.getPhoto({
-        resultType: CameraResultType.Uri,
-        source: CameraSource.Camera,
-        quality: 100,
-      });
+      const capturedPicture = await this.takePicture();
 
       const base64Data = await this.readAsBase64(capturedPicture);
       const fileName = `${Date.now()}.jpeg`;
@@ -43,13 +53,23 @@ export class PictureService {
             webviewPath: capturedPicture.webPath,
           };
 
-      this.savePicture(newPicture).catch((error) => {
-        
-      });
+      this.savePicture(newPicture);
 
       return newPicture;
     } catch (error) {
-      throw new Error('Impossible de prendre la photo');
+      throw new Error('Impossible de créer une nouvelle photo');
+    }
+  }
+
+  private async takePicture(): Promise<Photo> {
+    try {
+      return await Camera.getPhoto({
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        quality: 100,
+      });
+    } catch (error) {
+      throw new CameraError('Impossible de prendre la photo');
     }
   }
 
@@ -72,7 +92,7 @@ export class PictureService {
     const { value } = await Preferences.get({ key: imagePath });
 
     if (!value) {
-      return { imagePath: 'default' };
+      return { imagePath: 'default', webviewPath: '../../assets/images/notes.webp' };
     } else {
       const loadedPicture = JSON.parse(value) as Picture;
 

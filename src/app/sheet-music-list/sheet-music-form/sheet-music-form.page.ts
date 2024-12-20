@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { SheetMusic } from 'src/app/models/sheet-music/sheet-music.model';
 import { OptionsService } from 'src/app/services/options/options.service';
-import { Picture, PictureService } from 'src/app/services/picture/picture.service';
+import { Picture, CameraError, PictureService } from 'src/app/services/picture/picture.service';
 import { SheetMusicService } from 'src/app/services/sheet-music/sheet-music.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 
@@ -68,7 +68,7 @@ export class SheetMusicFormPage implements OnInit {
 
   async takePicture() {
     try {
-      const picture: Picture = await this.pictureService.takePicture();
+      const picture: Picture = await this.pictureService.newPicture();
       
       if (picture) {
         const oldImagePath = this.sheet.picture?.imagePath;
@@ -81,7 +81,11 @@ export class SheetMusicFormPage implements OnInit {
         this.sheet.setPicture(picture);
         this.tempPicture = picture;
       }
-    } catch (error) {}
+    } catch (error) {
+      if (error !instanceof CameraError) {
+        this.toastService.presentToast('warning', error.message);
+      }
+    }
   }
   
   async submit(form: NgForm) {
