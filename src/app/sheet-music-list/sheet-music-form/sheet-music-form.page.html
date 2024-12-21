@@ -7,85 +7,108 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <form #form="ngForm" (ngSubmit)="submit(form)">
-    <ion-item>
-      <ion-label position="floating">Nom</ion-label>
-      <ion-input type="text" [(ngModel)]="sheet.name" name="name" #name="ngModel" minlength="1" maxlength="50" required></ion-input>
+<ion-content [fullscreen]="true" class="bg-fc-blue-light text-fc-white">
+  <form #form="ngForm" (ngSubmit)="submit(form)" class="my-6 px-4">
+    <div class="space-y-6">
+      <div>
+        <ion-label class="fc-label">Nom</ion-label>
+        <input 
+          type="text"
+          [(ngModel)]="sheet.name"
+          name="name"
+          #name="ngModel"
+          minlength="1"
+          maxlength="50"
+          required
+          class="fc-input"
+        />
+        <p *ngIf="form.submitted && name.invalid" class="fc-error">
+          <span *ngIf="name.errors?.['required']">Le nom est requis</span>
+          <span *ngIf="name.errors?.['maxlength']">Le nom ne peut pas dépasser {{ name.errors?.['maxlength']?.requiredLength }} caractères</span>
+          <span *ngIf="name.errors?.['minlength']">Le nom doit contenir au moins {{ name.errors?.['minlength']?.requiredLength }} caractères</span>
+        </p>
+      </div>
+      <div>
+        <ion-label class="fc-label">Auteur</ion-label>
+        <input 
+          type="text"
+          [(ngModel)]="sheet.author"
+          name="author"
+          #author="ngModel"
+          minlength="5"
+          maxlength="50"
+          required
+          class="fc-input"
+        />
+        <p *ngIf="form.submitted && author.invalid" class="fc-error">
+          <span *ngIf="author.errors?.['required']">L'auteur est requis</span>
+          <span *ngIf="author.errors?.['maxlength']">L'auteur ne peut pas dépasser {{ author.errors?.['maxlength']?.requiredLength }} caractères</span>
+          <span *ngIf="author.errors?.['minlength']">L'auteur doit contenir au moins {{ author.errors?.['minlength']?.requiredLength }} caractères</span>
+        </p>
+      </div>
 
-      <ion-text color="danger" *ngIf="form.submitted && name.invalid">
-        <span *ngIf="name.errors?.['required']">Le nom est requis</span>
-        <span *ngIf="name.errors?.['maxlength']">Le nom ne peut pas dépasser {{ name.errors?.['maxlength']?.requiredLength }} caractères</span>
-        <span *ngIf="name.errors?.['minlength']">Le nom doit contenir au moins {{ name.errors?.['minlength']?.requiredLength }} caractères</span>
-      </ion-text>
-    </ion-item>
+      <div>
+        <ion-label class="fc-label">Difficulté</ion-label>
+        <select [(ngModel)]="sheet.difficulty" name="difficulty" #difficulty="ngModel" required class="fc-input">
+          <option *ngFor="let option of difficultyOptions | keyvalue" [value]="option.key">
+            {{ option.value }}
+          </option>
+        </select>
+        <p *ngIf="form.submitted && difficulty.invalid" class="fc-error">
+          Une difficulté doit être sélectionnée
+        </p>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Auteur</ion-label>
-      <ion-input type="text" [(ngModel)]="sheet.author" name="author" #author="ngModel" minlength="5" maxlength="50" required></ion-input>
+      <div>
+        <ion-label class="fc-label">Type</ion-label>
+        <select [(ngModel)]="sheet.type" name="type" #type="ngModel" required class="fc-input">
+          <option *ngFor="let option of typeOptions | keyvalue" [value]="option.key">
+            {{ option.value }}
+          </option>
+        </select>
+        <p *ngIf="form.submitted && type.invalid" class="fc-error">
+          Un type doit être sélectionné
+        </p>
+      </div>
 
-      <ion-text color="danger" *ngIf="form.submitted && author.invalid">
-        <span *ngIf="author.errors?.['required']">L'auteur est requis</span>
-        <span *ngIf="author.errors?.['maxlength']">L'auteur ne peut pas dépasser {{ author.errors?.['maxlength']?.requiredLength }} caractères</span>
-        <span *ngIf="author.errors?.['minlength']">L'auteur doit contenir au moins {{ author.errors?.['minlength']?.requiredLength }} caractères</span>
-      </ion-text>
-    </ion-item>
+      <div class="flex items-center">
+        <ion-label class="fc-label mr-4">Apprise</ion-label>
+        <ion-toggle [(ngModel)]="sheet.isLearned" name="isLearned" color="secondary"></ion-toggle>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Difficulté</ion-label>
-      <ion-select [(ngModel)]="sheet.difficulty" name="difficulty" #difficulty="ngModel" required>
-        <ion-select-option *ngFor="let option of difficultyOptions | keyvalue" [value]="option.key">
-          {{ option.value }}
-        </ion-select-option>
-      </ion-select>
+      <div>
+        <div class="space-y-2">
+          <ion-label class="fc-label">Image</ion-label>
+          <div class="rounded-md overflow-hidden bg-fc-blue-dark">
+            <img 
+              *ngIf="sheet.imagePath" 
+              [src]="sheet.picture?.webviewPath" 
+              [alt]="sheet.name" 
+              class="w-full max-h-[50vh] object-cover object-top rounded-md cursor-pointer" 
+            />
+          </div>
+          <p *ngIf="form.submitted && !sheet.imagePath" class="fc-error">Une image est requise.</p>
+        </div>
 
-      <ion-text color="danger" *ngIf="form.submitted && difficulty.invalid">
-        <span>Une difficulté doit être sélectionnée</span>
-      </ion-text>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Type</ion-label>
-      <ion-select [(ngModel)]="sheet.type" name="type" #type="ngModel" required>
-        <ion-select-option *ngFor="let option of typeOptions | keyvalue" [value]="option.key">
-          {{ option.value }}
-        </ion-select-option>
-      </ion-select>
-
-      <ion-text color="danger" *ngIf="form.submitted && type.invalid">
-        <span>Un type doit être sélectionné</span>
-      </ion-text>
-    </ion-item>    
-
-    <ion-item>
-      <ion-label>Apprise</ion-label>
-      <ion-toggle [(ngModel)]="sheet.isLearned" name="isLearned"></ion-toggle>
-    </ion-item>
-
-    <ion-item lines="none">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12">
-            <img *ngIf="sheet.imagePath" [src]="sheet.picture?.webviewPath" alt="{{ sheet.name }}" />
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12">
-            <ion-text color="danger" *ngIf="form.submitted && !sheet.imagePath">
-              <span>Une image est requise</span>
-            </ion-text>
-            <ion-button expand="block" (click)="takePicture()">
+        <div class="flex justify-center">
+          <span>
+            <button type="button" expand="block" (click)="takePicture()" class="fc-button mt-2 px-4">
               <ion-icon name="camera" slot="start"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-item>
+              Ajouter une image
+            </button>
+          </span>
+        </div>
+      </div>
+  
+      <div class="w-full h-[1px] bg-neutral-400 my-6"></div>
 
-    <div class="ion-padding">
-      <ion-button type="submit" expand="block" [disabled]="form.invalid || !sheet.imagePath">
-        {{ isEditing ? 'Mettre à jour' : 'Ajouter' }}
-      </ion-button>
+      <div class="flex justify-center">
+        <span>
+          <ion-button type="submit" expand="block" [disabled]="form.invalid || !sheet.imagePath">
+            {{ isEditing ? 'Mettre à jour' : 'Ajouter' }}
+          </ion-button>
+        </span>
+      </div>
     </div>
   </form>
 </ion-content>

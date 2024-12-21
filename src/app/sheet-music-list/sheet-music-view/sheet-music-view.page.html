@@ -7,36 +7,64 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-grid>
-    <ion-row class="img-section">
-      <ion-col size="12">
-        <img [src]="sheet.picture?.webviewPath" alt="{{ sheet.name }}" />
-      </ion-col>
-    </ion-row>
+<ion-content class="bg-fc-blue-dark text-fc-white">
+  <div class="px-4 pt-6 pb-2 space-y-6">
+    <div class="flex justify-center items-center overflow-hidden h-[40vh] rounded-md">
+      <img 
+        [src]="sheet.picture?.webviewPath" 
+        [alt]="sheet.name" 
+        class="w-auto h-full object-contain object-top rounded-md cursor-pointer" 
+      />
+    </div>
 
-    <ion-row>
-      <ion-col size="12">
-        <h2>{{ sheet.name }}</h2>
-        <p><strong>Auteur :</strong> {{ sheet.author }}</p> 
+    <div>
+      <h2 class="text-2xl font-bold mb-2">{{ sheet.name }}</h2>
+      <p class="mb-4">
+        <span class="font-semibold">Auteur : </span>
+        <span class="text-neutral-300">{{ sheet.author }}</span>
+      </p>
 
-        <ion-button (click)="updateIsLearned()" expand="block" color="primary">
-          <ion-icon [name]="sheet.isLearned ? 'checkmark-circle' : 'close-circle'" slot="start"></ion-icon>
-          {{ sheet.isLearned ? 'Marquer comme non appris' : 'Marquer comme appris' }}
-        </ion-button>
-        <ion-button [routerLink]="['/sheet-music-list', sheet.id, 'edit']" expand="block" color="secondary">
-          <ion-icon name="create-outline" slot="start"></ion-icon>
-          Modifier
-        </ion-button>
+      <div class="flex justify-center">
+        <span>
+          <button 
+            (click)="updateIsLearned()" 
+            expand="block" 
+            class="flex flex-row justify-center items-center fc-button bg-cyan-600 hover:bg-cyan-700 mb-4 px-4 gap-x-2"
+          >
+            <ion-icon [name]="sheet.isLearned ? 'close-circle' : 'checkmark-circle'" slot="start"></ion-icon>
+            {{ sheet.isLearned ? 'Marquer comme non appris' : 'Marquer comme appris' }}
+          </button>
+        </span>
+      </div>
 
-        <p><strong>Difficulté :</strong> {{ getDifficultyValue() }}</p>
-        <p><strong>Type :</strong> {{ getTypeValue() }}</p>
+      <div class="flex justify-center">
+        <span>
+          <button 
+            [routerLink]="['/sheet-music-list', sheet.id, 'edit']" 
+            expand="block" 
+            class="flex flex-row justify-center items-center fc-button bg-indigo-600 hover:bg-indigo-700 mb-4 px-4 gap-x-2"
+          >
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Modifier
+          </button>
+        </span>
+      </div>
 
-        <ion-button (click)="deleteSheetMusic()" expand="block" color="danger">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
-          Supprimer
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+      <p class="mb-2"><span class="font-semibold">Difficulté :</span> {{ getDifficultyValue() }}</p>
+      <p class="mb-4"><span class="font-semibold">Type :</span> {{ getTypeValue() }}</p>
+
+      <div class="flex justify-center">
+        <span>
+          <button 
+            (click)="deleteSheetMusic()" 
+            expand="block" 
+            class="flex flex-row justify-center items-center fc-button bg-red-600 hover:bg-red-700 mb-4 px-4 gap-x-2"
+          >
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Supprimer
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
 </ion-content>
