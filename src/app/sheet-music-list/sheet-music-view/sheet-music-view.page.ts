@@ -22,24 +22,28 @@ export class SheetMusicViewPage implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-      this.getSheetMusicById(id)
-    } else {
-      this.toastService.presentToast('warning', 'Aucune partition n\'a été spécifiée', '/sheet-music-list');
+      try {
+        this.sheet = await this.getSheetMusicById(id);
+      } catch (error) {
+        this.toastService.presentToast('danger', 'Une erreur est survenue lors du chargement des données', '/sheet-music-list');
+      }
     }
   }
 
-  private getSheetMusicById(id: string) {
-    this.sheetMusicService.getOne(id).subscribe({
-      next: (sheet) => {
-        this.sheet = sheet;
-      },
-      error: () => {
-        this.toastService.presentToast('danger', 'Erreur lors du chargement de la partition', '/sheet-music-list');
-      }
+  private async getSheetMusicById(id: string): Promise<SheetMusic> {
+    return new Promise((resolve, reject) => {
+      this.sheetMusicService.getOne(id).subscribe({
+        next: (sheet) => {
+          resolve(sheet);
+        },
+        error: (error) => {
+          reject(error);
+        }
+      });
     });
   }
 
